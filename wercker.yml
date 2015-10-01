@@ -16,5 +16,24 @@ build:
             export APPGITBRUNCH=develop
             export APPROOTDIR=/srv/www
             export APPTYPE=master
-
+    - script:
+        name: Varify gpg
+        code: |
+            # verify gpg and sha256: http://nodejs.org/dist/v0.10.30/SHASUMS256.txt.asc
+            # gpg: aka "Timothy J Fontaine (Work) <tj.fontaine@joyent.com>"
+            # gpg: aka "Julien Gilli <jgilli@fastmail.fm>"
+          set -ex && for key in 7937DFD2AB06298B2293C3187D33FF9D0246406D 114F43EE0176B71C7BC219DD50A3051F888C628D ; do gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; done
+    - script:
+        name: SSH config & others
+        code: |
+          # List docker images, it should list the rethinkdb image
+          apt-get -y install openssh-server python-setuptools
+            mkdir -p /configs/ssh
+            mkdir /root/.ssh
+            mkdir -p /var/log/supervisor
+            mv /configs/ssh/* /root/.ssh/
+            cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+            chmod 600 /root/.ssh/authorized_keys
+            chmod 400 /root/.ssh/id_rsa
+            ssh-keyscan -H $REPOHOST >> ~/.ssh/known_hosts
 
