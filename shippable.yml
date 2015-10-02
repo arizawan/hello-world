@@ -1,0 +1,2 @@
+script:
+    - git clone git@bitbucket.org:parkiee-devops/docker-frontend.git .
